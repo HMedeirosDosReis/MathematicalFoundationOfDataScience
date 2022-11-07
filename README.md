@@ -16,6 +16,7 @@ Meeting 11/7:
    - some demographic analysis of data set
    - check scale of all images
    - import are images and change scale
+  
   HW:
     - Get 20 pictures of ourselves
     - download data set
