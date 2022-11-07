@@ -21,3 +21,11 @@ Meeting 11/7:
   -2. predict name associated with the face with good accuracy and fast
         Add our faces
   -3. add more...
+
+
+
+
+------------------------
+library(magick)
+> image_read("/Users/hhenr/Downloads/lfw/lfw/lfw/Aaron_Eckhart/Aaron_Eckhart_0001.jpg")
+
