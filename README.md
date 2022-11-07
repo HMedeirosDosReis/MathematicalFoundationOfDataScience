@@ -18,10 +18,10 @@ Meeting 11/7:
    - import are images and change scale
   
   HW:
-    - Get 20 pictures of ourselves
-    - download data set
-    - look at prcomp
-    - magick - image_quanti
+   - Get 20 pictures of ourselves
+   - download data set
+   - look at prcomp
+   - magick - image_quanti
 
   Start Powerpoint
   - what is PCA
