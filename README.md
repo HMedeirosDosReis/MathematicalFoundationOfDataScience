@@ -10,6 +10,8 @@ Meeting 11/7:
    - load image
   Next Time:
     - some demographic analysis of data set
+    - check scale of all images
+    - import are images and change scale
   HW:
     - Get 20 pictures of ourselves
     - look at prcomp
