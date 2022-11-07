@@ -3,15 +3,17 @@ Project for MSSC-5931 Mathematical Foundations of Data Science class at Marquett
 
 Meeting 11/7:
   Today: 
-    - download dataset "folder A"
-    - upload in R
-    - function that fetch for min faces to be 20
-    - make directory in R will create a "folder B" that only has the data set of min faces in it
-    - load image
+   - download dataset "folder A"
+   - upload in R
+   - function that fetch for min faces to be 20
+   - make directory in R will create a "folder B" that only has the data set of min faces in it
+   - load image
   Next Time:
     - some demographic analysis of data set
   HW:
     - Get 20 pictures of ourselves
+    - look at prcomp
+    - magick - image_quanti
 
   Start Powerpoint
   - what is PCA
@@ -30,4 +32,6 @@ Meeting 11/7:
 ------------------------
 library(magick)
 > image_read("/Users/hhenr/Downloads/lfw/lfw/lfw/Aaron_Eckhart/Aaron_Eckhart_0001.jpg")
+
+prcomp
 
