@@ -3,13 +3,15 @@ Project for MSSC-5931 Mathematical Foundations of Data Science class at Marquett
 
 Meeting 11/7:
   Today: 
-    download dataset "folder A"
-    upload in R
-    function that fetch for min faces to be 20
-    make directory in R will create a "folder B" that only has the data set of min faces in it
+    - download dataset "folder A"
+    - upload in R
+    - function that fetch for min faces to be 20
+    - make directory in R will create a "folder B" that only has the data set of min faces in it
+    - load image
   Next Time:
-    load image
-    some demographic analysis of data set
+    - some demographic analysis of data set
+  HW:
+    - Get 20 pictures of ourselves
 
   Start Powerpoint
   - what is PCA
@@ -17,10 +19,10 @@ Meeting 11/7:
 
 
   Project goal:
-  -1. how many components be used that give a good amount of explained variance
-  -2. predict name associated with the face with good accuracy and fast
-        Add our faces
-  -3. add more...
+  - how many components be used that give a good amount of explained variance
+  - predict name associated with the face with good accuracy and fast
+        - Add our faces
+  - add more...
 
 
 
