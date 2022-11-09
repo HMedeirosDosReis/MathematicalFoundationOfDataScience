@@ -19,7 +19,7 @@ folders <- dir(path = reduced_dir, pattern = NULL, all.files = FALSE,
 
 # individual picture converted to vector (for testing) --------------------
 
-# set n = # pixels for width and height
+# set n = # pixels for widths and heights
 
 n = 100
 
