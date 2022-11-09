@@ -9,7 +9,7 @@ library(jpeg)
 
 # jdseidma for desktop, thema for laptop
 
-reduced_dir <- "C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images"
+reduced_dir <- "C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images"
 setwd(reduced_dir)
 
 folders <- dir(path = reduced_dir, pattern = NULL, all.files = FALSE,
@@ -86,12 +86,12 @@ toc()
 # writing as a CSV file to allow us to not have to run above code every time
 
 tic("writing csv")
-write.csv(X,"C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project\\imagematrix.csv", row.names = FALSE)
+write.csv(X,"C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project\\imagematrix.csv", row.names = FALSE)
 toc()
 
 # loading CSV file into R (set wd to wherever it's saved)
 
-setwd("C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project")
+setwd("C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project")
 
 tic("loading in matrix")
 X2 <- read.csv('imagematrix.csv')
@@ -141,7 +141,7 @@ qplot(c(1:10), var_explained[1:10]) +
 
 # why is each column of rotation not an eigenface???
 
-setwd("C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project")
+setwd("C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project")
 
 EigenFaces = faces_pca$rotation[,1:r]
 
@@ -169,7 +169,17 @@ restr <- faces_pca$x[,1:r]%*%t(EigenFaces)
 
 restr <- scale(restr, center = -1*faces_pca$center, scale = 1/faces_pca$scale)
 
-# to plot these, need to rerun code at beginning of document
+# to plot these, need to rerun code at beginning of document (copied)
+
+setwd(paste0(reduced_dir, "/",folders[1]))
+photos <- dir(path = paste0(reduced_dir, "/",folders[1]), 
+              pattern = NULL, all.files = FALSE,
+              full.names = FALSE, recursive = FALSE,
+              ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+pic <- grayscale(load.image(photos[2]))
+
+img <- resize(pic, n, n)
+
 
 layout(t(1:3))
 plot(pic)
@@ -177,9 +187,26 @@ plot(as.cimg(matrix(X[,1], ncol = n)))
 plot(as.cimg(matrix(restr[1,], ncol = n)))
 
 
-plot(as.cimg(matrix(restr[2,], ncol = n)))
+# trying to fix face shade ------------------------------------------------
 
-layout(t(1:3))
-plot(pic)
-plot(img)
-plot(as.cimg(matrix(restr[2,], ncol = n)))
+# layout(t(1:3))
+# plot(pic)
+# plot(img)
+# plot(as.cimg(matrix(restr[2,], ncol = n)))
+# plot(as.cimg(matrix(t_img, ncol = n)))
+# 
+# t_img <- restr[2,]
+# min <- min(t_img)
+# max <- max(t_img)
+# range <- max - min
+# 
+# for (i in 1:length(t_img)) {
+#   if(t_img[i] < min + 0.5*range && t_img[i] != min){
+#     t_img[i] <- t_img[i] + 0.12*range
+#   }
+# }
+# 
+# layout(t(1:3))
+# plot(img)
+# plot(as.cimg(matrix(restr[2,], ncol = n)))
+# plot(as.cimg(matrix(t_img + EigenFaces[,2], ncol = n)))
