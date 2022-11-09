@@ -4,14 +4,6 @@ library(tictoc)
 library(ggplot2)
 library(jpeg)
 
-# # resizes to some new size
-# tr <- resize(test, 720, 96/72*720)
-# plot(test)
-# plot(tr)
-
-# # makes it a matrix
-# as.matrix(tr)
-
 # set wd to reduced images
 # jdseidma for desktop, thema for laptop
 
