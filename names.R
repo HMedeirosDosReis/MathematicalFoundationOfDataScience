@@ -21,8 +21,8 @@ name_associated_w_pic_num<-function(path, number)
   
   # Return a concatenated version of the names without the separation that comes
   # the file name.
-  return(cat(f_name,l_name))
+  return(paste(f_name,l_name))
 }
 
 #i.e. use 
-#name_associated_w_pic_num("C:/Users/hhenr/Documents/test",1)
+full_name <- name_associated_w_pic_num("C:/Users/hhenr/Documents/test",1)
