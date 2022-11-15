@@ -188,14 +188,43 @@ for (i in 1:length(folders)) {
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
   y <- c(y, rep(i, each=20))
 }
+y <- factor(y)
+y
 
-y <- data.frame(y = y)
+mydata <- cbind(y, faces_pca$x[,1:r])
 
-data <- cbind(y, faces_pca$x[,1:])
-
-classifier <- svm(faces_pca$x[,1:r], y)
-prediction <- predict(classifier, t(testing))
+classifier <- svm(y ~., data = mydata)
+prediction <- predict(classifier, faces_pca$x[,1:r])
 folders[as.integer(round(prediction))]
+
+newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
+
+newimg <- load.image("C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images/Laura_Bush/Laura_Bush_0034.jpg")
+newimg <- resize(grayscale(newimg), n, n)
+newimgv <- as.data.frame(newimg)[3]
+newimgv <- as.matrix(newimgv)
+
+# multiply your image by the rotation matrix to put it in correct form
+
+newdat2 <- t(newimgv)%*%faces_pca$rotation[,1:r]
+
+prediction <- predict(classifier, newdat2)
+folders[as.integer(prediction)]
+
+
+# check if in data frame --------------------------------------------------
+
+plot(as.cimg(matrix(newimgv, ncol = n)))
+
+for (i in 1:ncol(X)) {
+  if(mean(as.data.frame(newimgv) == X[,i]) == 1){
+    print(paste("There was a match at column", i))
+    break
+  }
+  if(i == ncol(X)){
+    print("The picture was not in the dataset")
+  }
+}
 
 #plot(as.cimg(matrix(ourpred, ncol = n)))
 #title(title(name_associated_w_pic_num(reduced_dir, place)))
