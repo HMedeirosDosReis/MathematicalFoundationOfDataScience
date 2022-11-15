@@ -4,6 +4,7 @@ library(tictoc)
 library(ggplot2)
 library(jpeg)
 library(magick)
+library(e1071)
 
 
 # set wd to reduced images ------------------------------------------------
@@ -70,7 +71,7 @@ for (i in 1:length(folders)) {
                 pattern = NULL, all.files = FALSE,
                 full.names = FALSE, recursive = FALSE,
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  for (j in 1:length(photos)) {
+  for (j in 1:20) {
     pic <- grayscale(load.image(photos[j]))
     pic <- resize(pic, n, n)
     vector <- as.data.frame(pic)[,3]
@@ -85,8 +86,10 @@ meanface <- matrix(rowMeans(X), nrow = n)
 
 # full PCA of image matrix -- need to do pca of transpose for some --------
 
+# do NOT center and scale, this causes the faces to become darker than we want
+
 tic("pca runtime")
-faces_pca <- prcomp(t(X), center = TRUE, scale. = TRUE)
+faces_pca <- prcomp(t(X), center = FALSE, scale. = FALSE)
 toc()
 
 # checking for total explained variance limit
@@ -115,35 +118,32 @@ qplot(c(1:10), var_explained[1:10]) +
   ggtitle("Scree Plot") +
   ylim(0, 1)
 
-
 # plotting Eigenfaces and reconstructing images ---------------------------
 
-# why is each column of rotation not an eigenface???
+# faces_pca$x are the scores of the images
 
 setwd("C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project")
 setwd("../..")
 
-# first eigenface
+# first eigenface and plot
+
 EigenFaces <- faces_pca$rotation[,1:r]
 
 ef_1 <- matrix(EigenFaces[,1], ncol = 1)
 ef_1_mat <- matrix(ef_1, nrow = n)
 
-# eigenfaces: make a matrix of the column of the rotation matrix (defined above)
-
 plot(as.cimg(ef_1_mat))
 
 # reconstruct: whatever # image it is, do plot as.cimg(matrix(restr[#,], ncol = n))
 
-restr <- faces_pca$x[,1:r]%*%t(EigenFaces)
+# restr <- faces_pca$x[,1:r]%*%t(EigenFaces)
+# 
+# restr <- scale(restr, center = -1*faces_pca$center, scale = 1/faces_pca$scale)
 
-restr <- scale(restr, center = -1*faces_pca$center, scale = 1/faces_pca$scale)
 
-# to plot these, need to rerun code at beginning of document (copied)
+# random person sampling --------------------------------------------------
 
 rperson <- sample(1:length(folders), 1)
-
-
 
 setwd(paste0(reduced_dir, "/",folders[rperson]))
 photos <- dir(path = paste0(reduced_dir, "/",folders[rperson]), 
@@ -176,9 +176,8 @@ plot(as.cimg(matrix(X[,place], ncol = n)))
 plot(as.cimg(matrix(restr[place,], ncol = n)))
 title(name_associated_w_pic_num(reduced_dir, place))
 
-# LR ------------------------------
+# trying SVM --------------------------------------------------------------
 
-tx<-t(X)
 y<-c()
 
 for (i in 1:length(folders)) {
@@ -187,44 +186,16 @@ for (i in 1:length(folders)) {
                 pattern = NULL, all.files = FALSE,
                 full.names = FALSE, recursive = FALSE,
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  y <- c(y, rep(i, each=length(photos)))
+  y <- c(y, rep(i, each=20))
 }
 
-y <- matrix(y, ncol = 1)
+y <- data.frame(y = y)
 
-tic("linear model runtime")
-line_2 <- lm(y ~ tx)
-toc()
+data <- cbind(y, faces_pca$x[,1:])
 
-line_3 <- lm(y ~ restr)
-ourpred <- predict(line_2, newdata = data.frame(tx[,place]))
-res <- ourpred[place]
-
-folders[as.integer(round(res))]
+classifier <- svm(faces_pca$x[,1:r], y)
+prediction <- predict(classifier, t(testing))
+folders[as.integer(round(prediction))]
 
 #plot(as.cimg(matrix(ourpred, ncol = n)))
 #title(title(name_associated_w_pic_num(reduced_dir, place)))
-
-# trying to fix face shade ------------------------------------------------
-
-# layout(t(1:3))
-# plot(pic)
-# plot(img)
-# plot(as.cimg(matrix(restr[2,], ncol = n)))
-# plot(as.cimg(matrix(t_img, ncol = n)))
-# 
-# t_img <- restr[2,]
-# min <- min(t_img)
-# max <- max(t_img)
-# range <- max - min
-# 
-# for (i in 1:length(t_img)) {
-#   if(t_img[i] < min + 0.5*range && t_img[i] != min){
-#     t_img[i] <- t_img[i] + 0.12*range
-#   }
-# }
-# 
-# layout(t(1:3))
-# plot(img)
-# plot(as.cimg(matrix(restr[2,], ncol = n)))
-# plot(as.cimg(matrix(t_img + EigenFaces[,2], ncol = n)))
