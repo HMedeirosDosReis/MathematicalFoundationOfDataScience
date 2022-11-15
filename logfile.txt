@@ -39,6 +39,7 @@ Meeting 11/15:
    
    
   To Do:
+   - Read.me
    - Clean data
      - make perfect environment that check if input is correct if not fail
      - Create main file
