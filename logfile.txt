@@ -28,27 +28,46 @@ Meeting 11/14:
   - Jen's and Henri's photos done
   - added some cleaning in beginning
   - how to use LR to predict
+  
+Meeting 11/15:
+  - Josh talked to Dr. M about proj
+  - updated code to fix PCA
+    - potential error with black line at top image
+  - created SVM and it predicts well
+  - need to assign who is doing what from here on
+  
    
    
-  Next Time:
-   - potential error with black line at top image
+  To Do:
+   - Read.me
    - Clean data
      - make perfect environment that check if input is correct if not fail
-     - import our images and change values from 62 to 65
-   - how to use LR to predict: together
-   - print the name of the prediction
+     - Create main file
+     - Create functions for basically every section (split these up)
+   - Prediction
+     - someone already in data set
+     - someone outside data set
+     - is there a significant difference between our pictures and the other pictures when it comes to prediction
+     - any conclusions onto why its failing
+   - Powerpoint (listed below)
+   - Areas of Improvement: look at other methods of prediction and see how they compare
    
   
  ------------------------
  HW:
-   - Get 20 pictures of ourselves
+   - 
 
-  Start Powerpoint
-  - what is PCA
-  - math behind it
-  - whats are data set and what is the standards of pictures
+  Start Powerpoint (<20 slides - 1 slide per minute)
+  - Project goal
+  - what is PCA and SVM
+    -  math behind it
+  - whats our data set and what is the standards of pictures
   - What libraries were used
-  - mean face and talk about how faces are not all centered and straight on
+  - Method: Steps to complete experiment
+  - Results of PCA
+  - Results of SVM
+  - Areas of Improvement
+  - References
 
 
   Project goal:
