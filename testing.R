@@ -188,18 +188,19 @@ for (i in 1:length(folders)) {
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
   y <- c(y, rep(i, each=20))
 }
-y <- factor(y)
-y
 
-mydata <- cbind(y, faces_pca$x[,1:r])
+# putting y and the predictors together and making y a factor for SVM
 
-classifier <- svm(y ~., data = mydata)
-prediction <- predict(classifier, faces_pca$x[,1:r])
-folders[as.integer(round(prediction))]
+mydata <- as.data.frame(cbind(y, faces_pca$x[,1:r]))
+mydata$y <- as.factor(mydata$y)
+
+classifier <- svm(y ~ ., data = mydata)
+prediction <- predict(classifier, newdata = faces_pca$x[,1:r])
+folders[as.integer(prediction)]
 
 newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
 
-newimg <- load.image("C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images/Laura_Bush/Laura_Bush_0034.jpg")
+newimg <- load.image("C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images/Laura_Bush/Laura_Bush_0034.jpg")
 newimg <- resize(grayscale(newimg), n, n)
 newimgv <- as.data.frame(newimg)[3]
 newimgv <- as.matrix(newimgv)
