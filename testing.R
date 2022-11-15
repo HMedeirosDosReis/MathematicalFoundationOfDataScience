@@ -227,5 +227,16 @@ for (i in 1:ncol(X)) {
   }
 }
 
+var <- table(as.numeric(prediction), as.matrix(y))
+
+sum <- 0
+
+for (i in 1:ncol(var)) {
+  sum <- sum + var[i,i]
+  if(i == ncol(var)){
+    print(paste0("Accuracy of ", round(100*sum/(20*65), 2), "%"))
+  }
+}
+
 #plot(as.cimg(matrix(ourpred, ncol = n)))
 #title(title(name_associated_w_pic_num(reduced_dir, place)))
