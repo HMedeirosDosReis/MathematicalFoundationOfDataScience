@@ -39,16 +39,17 @@ Meeting 11/15:
    
    
   To Do:
-   - Read.me
-   - Clean data
+   - Read.me/Powerpoint
+   - Clean data- HENRI
      - make perfect environment that check if input is correct if not fail
      - Create main file
-     - Create functions for basically every section (split these up)
-   - Prediction
+     - Create functions for basically every section 
+   - Train and Split Data - HENRI
+   - Prediction - JENNY
      - someone already in data set
      - someone outside data set
      - is there a significant difference between our pictures and the other pictures when it comes to prediction
-     - any conclusions onto why its failing
+     - any conclusions onto why its not prediciting
    - Powerpoint (listed below)
    - Areas of Improvement: look at other methods of prediction and see how they compare
    
@@ -59,7 +60,7 @@ Meeting 11/15:
 
   Start Powerpoint (<20 slides - 1 slide per minute)
   - Project goal
-  - what is PCA and SVM
+  - what is PCA and SVM in general and in our sense
     -  math behind it
   - whats our data set and what is the standards of pictures
   - What libraries were used
