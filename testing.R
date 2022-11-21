@@ -16,7 +16,7 @@ reduced_dir <- "C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/I
 
 # Henri wd: 
 
-reduced_dir <- 
+reduced_dir <- "C:/Users/hhenr/Documents/test"
 
 # Jennifer wd:
   
