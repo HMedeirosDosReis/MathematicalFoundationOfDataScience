@@ -16,6 +16,6 @@ set_directory <- function(option = 0)
   else if(option==3)
     dire<-"C:/Users/hhenr/Documents/test"
   else if(option==4)
-    dire<-"C:/Users/jans7/OneDrive - Marquette University/Fall 2022/MSSC 5931 - Topics in Math or Stats/Project/NewFace_20"
+    dire<-"C:/Users/jans7/OneDrive - Marquette University/Fall 2022/MSSC 5931 - Topics in Math or Stats/Project/NewFace_23"
   return(dire)
 }
