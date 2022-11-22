@@ -45,11 +45,11 @@ Meeting 11/15:
      - Create main file
      - Create functions for basically every section 
    - Train and Split Data - HENRI
-   - Prediction - JENNY
-     - someone already in data set
+   - Prediction - JENNY - predictionanalysis.rmd - If you don't want to run it I can send screenshot of outputs
+     - someone already in data set - done
      - someone outside data set
-     - is there a significant difference between our pictures and the other pictures when it comes to prediction
-     - any conclusions onto why its not prediciting
+     - is there a significant difference between our pictures and the other pictures when it comes to prediction - done
+     - any conclusions onto why its not prediciting - need opinions
    - Powerpoint (listed below)
    - Areas of Improvement: look at other methods of prediction and see how they compare
    
