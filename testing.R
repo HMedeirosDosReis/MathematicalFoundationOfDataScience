@@ -1,3 +1,4 @@
+
 library(Rcpp)
 library(imager)
 library(tictoc)
@@ -142,7 +143,8 @@ plot(as.cimg(ef_1_mat))
 
 
 # random person sampling --------------------------------------------------
-
+############### Henri is not sure if this should be in the code or 
+############### if it was just testing
 rperson <- sample(1:length(folders), 1)
 
 setwd(paste0(reduced_dir, "/",folders[rperson]))
@@ -198,6 +200,9 @@ classifier <- svm(y ~ ., data = mydata)
 prediction <- predict(classifier, newdata = faces_pca$x[,1:r])
 folders[as.integer(prediction)]
 
+
+##################### should we make this a general case?
+####### I stopped here 
 newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
 
 newimg <- load.image("C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images/Laura_Bush/Laura_Bush_0034.jpg")
