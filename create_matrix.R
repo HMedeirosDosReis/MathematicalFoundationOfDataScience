@@ -15,7 +15,7 @@ create_matrix <- function(folders,nphotos=20,n=100, predictor=TRUE)
                     pattern = NULL, all.files = FALSE,
                     full.names = FALSE, recursive = FALSE,
                     ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-      for (j in 1:nphotos) 
+      for (j in 1:nphotos*0.8) 
       {
         pic <- grayscale(load.image(photos[j]))
         pic <- resize(pic, n, n)
@@ -30,7 +30,7 @@ create_matrix <- function(folders,nphotos=20,n=100, predictor=TRUE)
   {
     y<-c()
     
-    for (i in 1:length(folders)) 
+    for (i in length(folders)*0.8:20) 
     {
       
       setwd(paste0(reduced_dir, "/",folders[i]))
