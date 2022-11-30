@@ -12,6 +12,7 @@ source("") ###### For all the files
 
 main <- function()
 {
+  ###########NEED FILTER DATA
   print("Which user? (0,1,2,3,4)")
   user<-readline()
   reduced_dir<-set_directory(user)
