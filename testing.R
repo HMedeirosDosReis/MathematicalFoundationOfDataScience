@@ -71,7 +71,7 @@ for (i in 1:length(folders)) {
                 pattern = NULL, all.files = FALSE,
                 full.names = FALSE, recursive = FALSE,
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  for (j in 1:20) {
+  for (j in 1:(20)) {
     pic <- grayscale(load.image(photos[j]))
     pic <- resize(pic, n, n)
     vector <- as.data.frame(pic)[,3]
@@ -83,6 +83,7 @@ toc()
 # plotting mean face for fun (he don't look great)
 
 meanface <- matrix(rowMeans(X), nrow = n)
+#meanface <- matrix(rowMeans(X), nrow = n)
 
 # full PCA of image matrix -- need to do pca of transpose for some --------
 
@@ -91,6 +92,7 @@ meanface <- matrix(rowMeans(X), nrow = n)
 tic("pca runtime")
 faces_pca <- prcomp(t(X), center = FALSE, scale. = FALSE)
 toc()
+
 
 # checking for total explained variance limit
 # paramater p: our goal for explained variance
@@ -195,6 +197,16 @@ for (i in 1:length(folders)) {
 
 mydata <- as.data.frame(cbind(y, faces_pca$x[,1:r]))
 mydata$y <- as.factor(mydata$y)
+
+#HERE IS WHERE YOU DO TEST AND TRAIN
+mydata<- matrix(rnorm(100),nrow=10)
+train <- mydata[1:round(length(mydata[1,])*0.8),]
+test <- mydata[(round(length(mydata[1,])*0.8)+1):length(mydata[1,]),]
+#train <- mydata[1:0.8*length(mydata[1,]),1:0.8*length(mydata[,1])]
+#test <- mydata[0.8*length(mydata[1,]):,0.8*length(mydata[,1]):]
+
+
+
 
 classifier <- svm(y ~ ., data = mydata)
 prediction <- predict(classifier, newdata = faces_pca$x[,1:r])
