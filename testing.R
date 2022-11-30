@@ -1,4 +1,3 @@
-
 library(Rcpp)
 library(imager)
 library(tictoc)
@@ -17,11 +16,11 @@ reduced_dir <- "C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/I
 
 # Henri wd: 
 
-reduced_dir <- "C:/Users/hhenr/Documents/test"
-
-# Jennifer wd:
+reduced_dir <- 
   
-reduced_dir <- "C:/Users/jans7/OneDrive - Marquette University/Fall 2022/MSSC 5931 - Topics in Math or Stats/Project/NewFace_20"
+  # Jennifer wd:
+  
+  reduced_dir <- "C:/Users/jans7/OneDrive - Marquette University/Fall 2022/MSSC 5931 - Topics in Math or Stats/Project/NewFace_23"
 
 # setting working directory -----------------------------------------------
 
@@ -46,17 +45,17 @@ if (length(folders) < length(folders)){
 # (not utilized in the for loop to create matrix of images)
 n = 100
 
-pic_to_vector <- function(i, j){
-  setwd(paste0(reduced_dir, "/",folders[i]))
-  photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
-                pattern = NULL, all.files = FALSE,
-                full.names = FALSE, recursive = FALSE,
-                ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  pic <- grayscale(load.image(photos[j]))
-  pic <- resize(pic, n, n)
-  vector <- as.data.frame(pic)[,3]
-  return(vector)
-}
+# pic_to_vector <- function(i, j){
+#   setwd(paste0(reduced_dir, "/",folders[i]))
+#   photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
+#                 pattern = NULL, all.files = FALSE,
+#                 full.names = FALSE, recursive = FALSE,
+#                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+#   pic <- grayscale(load.image(photos[j]))
+#   pic <- resize(pic, n, n)
+#   vector <- as.data.frame(pic)[,3]
+#   return(vector)
+# }
 
 # Putting data into matrix -----------------------------------------
 
@@ -143,8 +142,7 @@ plot(as.cimg(ef_1_mat))
 
 
 # random person sampling --------------------------------------------------
-############### Henri is not sure if this should be in the code or 
-############### if it was just testing
+
 rperson <- sample(1:length(folders), 1)
 
 setwd(paste0(reduced_dir, "/",folders[rperson]))
@@ -153,7 +151,8 @@ photos <- dir(path = paste0(reduced_dir, "/",folders[rperson]),
               full.names = FALSE, recursive = FALSE,
               ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
 
-rpic <- sample(1:length(photos), 1)
+#rpic <- sample(1:length(photos), 1)
+rpic <- sample(1:20, 1)
 
 pic <- grayscale(load.image(photos[rpic]))
 
@@ -167,7 +166,8 @@ for (i in 1:(rperson-1)) {
                 pattern = NULL, all.files = FALSE,
                 full.names = FALSE, recursive = FALSE,
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  place <- length(photos) + place
+  #place <- length(photos) + place
+  place <- 20 + place
 }
 
 place <- place + rpic
@@ -175,7 +175,7 @@ place <- place + rpic
 layout(t(1:3))
 plot(pic)
 plot(as.cimg(matrix(X[,place], ncol = n)))
-plot(as.cimg(matrix(restr[place,], ncol = n)))
+#plot(as.cimg(matrix(restr[place,], ncol = n)))
 title(name_associated_w_pic_num(reduced_dir, place))
 
 # trying SVM --------------------------------------------------------------
@@ -200,48 +200,38 @@ classifier <- svm(y ~ ., data = mydata)
 prediction <- predict(classifier, newdata = faces_pca$x[,1:r])
 folders[as.integer(prediction)]
 
-
-##################### should we make this a general case?
-####### I stopped here 
-newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
-
-newimg <- load.image("C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images/Laura_Bush/Laura_Bush_0034.jpg")
-newimg <- resize(grayscale(newimg), n, n)
-newimgv <- as.data.frame(newimg)[3]
-newimgv <- as.matrix(newimgv)
-
-# multiply your image by the rotation matrix to put it in correct form
-
-newdat2 <- t(newimgv)%*%faces_pca$rotation[,1:r]
-
-prediction <- predict(classifier, newdat2)
-folders[as.integer(prediction)]
+# newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
+# 
+# #newimg <- load.image("C:/Users/jans7/OneDrive - Marquette University/Fall 2022/MSSC 5931 - Topics in Math or Stats/Project/NewFace_20/Laura_Bush/Laura_Bush_0034.jpg")
+# newimg <- resize(grayscale(newimg), n, n)
+# newimgv <- as.data.frame(newimg)[3]
+# newimgv <- as.matrix(newimgv)
+# 
+# # multiply your image by the rotation matrix to put it in correct form
+# 
+# newdat2 <- t(newimgv)%*%faces_pca$rotation[,1:r]
+# 
+# prediction <- predict(classifier, newdat2)
+# folders[as.integer(prediction)]
 
 
 # check if in data frame --------------------------------------------------
 
-plot(as.cimg(matrix(newimgv, ncol = n)))
+#plot(as.cimg(matrix(newimgv, ncol = n)))
 
-for (i in 1:ncol(X)) {
-  if(mean(as.data.frame(newimgv) == X[,i]) == 1){
-    print(paste("There was a match at column", i))
-    break
-  }
-  if(i == ncol(X)){
-    print("The picture was not in the dataset")
-  }
-}
+# for (i in 1:ncol(X)) {
+#   if(mean(as.data.frame(newimgv) == X[,i]) == 1){
+#     print(paste("There was a match at column", i))
+#     break
+#   }
+#   if(i == ncol(X)){
+#     print("The picture was not in the dataset")
+#   }
+# }
 
-var <- table(as.numeric(prediction), as.matrix(y))
+var <- table(as.numeric(prediction), as.matrix(y)) 
 
-sum <- 0
 
-for (i in 1:ncol(var)) {
-  sum <- sum + var[i,i]
-  if(i == ncol(var)){
-    print(paste0("Accuracy of ", round(100*sum/(20*65), 2), "%"))
-  }
-}
 
 #plot(as.cimg(matrix(ourpred, ncol = n)))
 #title(title(name_associated_w_pic_num(reduced_dir, place)))
