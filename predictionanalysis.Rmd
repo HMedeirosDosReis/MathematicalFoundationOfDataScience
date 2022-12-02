@@ -3,35 +3,24 @@ title: "predictionanalysis"
 author: "Jennifer Sailor"
 date: "2022-11-22"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
-To run:
-must have run testing.R with all 65 people
-must have run demographics.Rmd
+
+To run: must have run testing.R with all 65 people must have run demographics.Rmd
 
 ```{r}
-#options(max.print=10000)
-#var
-var2 <- as.data.frame.matrix(var)
-#var2
-colnames(var2) <- folders
-rownames(var2) <- folders
-var2
+(var <- table(as.numeric(prediction2), as.matrix(test[,1])))
+(var <- table(as.numeric(prediction), as.matrix(val[,1])))
 
 ```
 
-How to read this:
-So it isn't for say not in numerical order
-because I checked both y and prediction which is what makes this matrix and they are in the correct order
+How to read this: So it isn't for say not in numerical order because I checked both y and prediction which is what makes this matrix and they are in the correct order
 
-So how to read this beast
-so if var2_ii is not 20 then check the full column where var2_ii != var2_ii and var2_ii != 0. Here will be var2_ki (row changes but column doesnt) and that k/row number will tell you who it is incorrectly predicting var2_ii as 
-
-
+So how to read this beast so if var2_ii is not 20 then check the full column where var2_ii != var2_ii and var2_ii != 0. Here will be var2_ki (row changes but column doesnt) and that k/row number will tell you who it is incorrectly predicting var2_ii as
 
 ```{r}
-numberofpics <- 20 #the max number of pictures of an individual in data set
+numberofpics <- 6 #the max number of pictures of an individual in data set
 
 #PART 1
 #finding total accuracy (used later), who was predicted wrong, and accuracy of those predicted wrong
@@ -89,7 +78,7 @@ for (i in 1:ncol(var)) {
     colofmat <- colofmat+1 #add one to column
     
     #loop that goes from 1 to number of individuals/which is the number of rows in var
-    for(k in 1:length(folders)){
+    for(k in 1:8){
       #in the column of the the incorrect prediction lets find the who was predicted instead
       #thus where is column not 0 and not the diagonal position
       if(var[k,i] != 0 && k != i){
@@ -129,34 +118,20 @@ for(i in 1:length(as.numeric(prediction))){
 #make data frame
 #this just combines parts 1 and 2 into a pretty dataframe to analyze
 incorrectresults <- data.frame(cbind(wrong_pred, accuracy_right_4wrong, predname_wrong))
-colnames(incorrectresults)[4] <- "Accuracy of individual (%)"
-colnames(incorrectresults)[5] <- "Algorithm predicted individual incorrectly as..."
-incorrectresults
+colnames(incorrectresults)[4] <- "Accuracy (%)"
+colnames(incorrectresults)[5] <- "Predicted individual as..."
+incorrectresults[,-3]
 ```
-
-
 
 ```{r}
 #Analysis of above datafram of incorrect results
-paste0("Total Accuracy of the algorithm ", round(100*sum/(numberofpics*length(folders)), 2), "%")
+paste0("Total Accuracy of the algorithm ", round(100*sum/(numberofpics*8), 2), "%")
 paste0("The name that was predicted the most as someone else was ", max(listofnameswrong), " with a count of ", sum(listofnameswrong == max(listofnameswrong)))
 paste0("The highest number of inaccurate predictions per person was: ", numberofpics-(min(accuracy_right_4wrong)/100*numberofpics))
-paste0(round(100*sum(results$gender == "M")/sum(demographics$gender == "M"),2),"% of the men were detected inaccurately") # (12/52)
-paste0(round(100*sum(results$gender == "F")/sum(demographics$gender == "F"),2), "% of the women were detected inaccurately") #(4/13)
+#paste0(round(100*sum(incorrectresults$gender == "M")/sum(demographics$gender == "M"),2),"% of the men were detected inaccurately") # (12/52)
+#paste0(round(100*sum(incorrectresults$gender == "F")/sum(demographics$gender == "F"),2), "% of the women were detected inaccurately") #(4/13)
 
 ```
 
-#Further Observations that required some manual interpretation
-
-Naomi is hard to find a reason to why she is being a problem/is the prediction of other people
-
-- looking at her data set nothing seems off and the genders or ethnicity do not even match to those that are getting predicted as her
-
-- looking at the photo josh was predicted as Naomi, I just don't see how the computer would do it
-
-Off the bat no significant between our pictures and the other individuals
 
 
-#TODO LIST:
-
-- figure out what it looks like 
