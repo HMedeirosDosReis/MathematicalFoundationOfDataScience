@@ -11,8 +11,8 @@ library(e1071)
 
 # Josh wd desktop and laptop: 
 
-reduced_dir <- "C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images"
-reduced_dir <- "C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/Images/Reduced Images"
+reduced_dir <- "C:/Users/jdseidma/Dropbox/Topics in Math Stats 5931/Final Project/Images/60 Images"
+reduced_dir <- "C:/Users/thema/Dropbox/Topics in Math Stats 5931/Final Project/Images/60 Images"
 
 # Henri wd: 
 
@@ -43,19 +43,7 @@ if (length(folders) < length(folders)){
 # converting picture to vector function for coding checks  ----------------
 
 # (not utilized in the for loop to create matrix of images)
-n = 100
-
-# pic_to_vector <- function(i, j){
-#   setwd(paste0(reduced_dir, "/",folders[i]))
-#   photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
-#                 pattern = NULL, all.files = FALSE,
-#                 full.names = FALSE, recursive = FALSE,
-#                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-#   pic <- grayscale(load.image(photos[j]))
-#   pic <- resize(pic, n, n)
-#   vector <- as.data.frame(pic)[,3]
-#   return(vector)
-# }
+n = 250
 
 # Putting data into matrix -----------------------------------------
 
@@ -65,16 +53,16 @@ X <- c()
 
 tic("runtime")
 for (i in 1:length(folders)) {
-  name <- folders[i]
-  setwd(paste0(reduced_dir, "/",name))
+  setwd(paste0(reduced_dir, "/",folders[i]))
   photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
                 pattern = NULL, all.files = FALSE,
                 full.names = FALSE, recursive = FALSE,
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  for (j in 1:(20)) {
+  for (j in 1:60) {
     pic <- grayscale(load.image(photos[j]))
     pic <- resize(pic, n, n)
-    vector <- as.data.frame(pic)[,3]
+    pic <- matrix(pic,nrow=n)[-c(c(1:floor(0.25*n)),c(floor(0.75*n+1):n)),-c(c(1:floor(0.25*n)),c(floor(0.75*n+1):n))]
+    vector <- matrix(pic, ncol=1)[,1]
     X <- cbind(X, vector)
   }
 }
@@ -82,17 +70,13 @@ toc()
 
 # plotting mean face for fun (he don't look great)
 
-meanface <- matrix(rowMeans(X), nrow = n)
-#meanface <- matrix(rowMeans(X), nrow = n)
-
-# full PCA of image matrix -- need to do pca of transpose for some --------
+# full PCA of image matrix -- need to do pca of transpose --------
 
 # do NOT center and scale, this causes the faces to become darker than we want
 
 tic("pca runtime")
 faces_pca <- prcomp(t(X), center = FALSE, scale. = FALSE)
 toc()
-
 
 # checking for total explained variance limit
 # paramater p: our goal for explained variance
@@ -118,6 +102,7 @@ qplot(c(1:10), var_explained[1:10]) +
   xlab("Principal Component") +
   ylab("Variance Explained") +
   ggtitle("Scree Plot") +
+  theme(plot.title = element_text(hjust = 0.5)) +
   ylim(0, 1)
 
 # plotting Eigenfaces and reconstructing images ---------------------------
@@ -142,45 +127,7 @@ plot(as.cimg(ef_1_mat))
 # 
 # restr <- scale(restr, center = -1*faces_pca$center, scale = 1/faces_pca$scale)
 
-
-# random person sampling --------------------------------------------------
-
-rperson <- sample(1:length(folders), 1)
-
-setwd(paste0(reduced_dir, "/",folders[rperson]))
-photos <- dir(path = paste0(reduced_dir, "/",folders[rperson]), 
-              pattern = NULL, all.files = FALSE,
-              full.names = FALSE, recursive = FALSE,
-              ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-
-#rpic <- sample(1:length(photos), 1)
-rpic <- sample(1:20, 1)
-
-pic <- grayscale(load.image(photos[rpic]))
-
-img <- resize(pic, n, n)
-
-place <- 0
-
-for (i in 1:(rperson-1)) {
-  setwd(paste0(reduced_dir, "/",folders[i]))
-  photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
-                pattern = NULL, all.files = FALSE,
-                full.names = FALSE, recursive = FALSE,
-                ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  #place <- length(photos) + place
-  place <- 20 + place
-}
-
-place <- place + rpic
-
-layout(t(1:3))
-plot(pic)
-plot(as.cimg(matrix(X[,place], ncol = n)))
-#plot(as.cimg(matrix(restr[place,], ncol = n)))
-title(name_associated_w_pic_num(reduced_dir, place))
-
-# trying SVM --------------------------------------------------------------
+# SVM --------------------------------------------------------------
 
 y<-c()
 
@@ -190,75 +137,126 @@ for (i in 1:length(folders)) {
                 pattern = NULL, all.files = FALSE,
                 full.names = FALSE, recursive = FALSE,
                 ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-  y <- c(y, rep(i, each=20))
+  y <- c(y, rep(i, each=60))
 }
 
-# putting y and the predictors together and making y a factor for SVM
+# no PCA
 
-mydata <- as.data.frame(cbind(y, faces_pca$x[,1:r]))
+mydata <- as.data.frame(cbind(y, faces_pca$x))
 mydata$y <- as.factor(mydata$y)
 
-#HERE IS WHERE YOU DO TEST AND TRAIN
-
-train <- mydata[1,]
-test <- mydata[1,]
-#i%%20 < 16 ||
+train <- c()
+val <- c()
+test <- c()
 for (i in 1:length(mydata[,1])) {
-  if ( i%%20 != 0) {
+  if (i%%60 <= 48 & i%%60 != 0) {
     train <- rbind(train, mydata[i,])
   }
   else
   {
-    test <- rbind(test,mydata[i,])
+    if (i%%60 <= 54 & i%%60 != 0) {
+      val <- rbind(val,mydata[i,])
+    }
+    else
+    {
+      if (i%%60 <= 60 || i%%60 == 0) {
+        test <- rbind(test, mydata[i,])
+      }
+    }
   }
   
 }
-train <- train[-1,]
-test <- test[-1,]
 
+# choosing the best kernel parameter for our final model
 
+accuracy <- c()
+max <- 0
+gammas <- c(0.1,0.01,0.001,0.0001,0.00001,0.000001)
 
+for (i in 1:length(gammas)) {
+  classifier <- svm(y ~ ., data = train, gamma = gammas[i], kernel = "radial")
+  prediction <- predict(classifier, newdata = val)
+  m <- sum(prediction == val$y)/length(prediction)
+  accuracy <- c(accuracy, m)
+  if (m == max(accuracy)){
+    max <- m
+  }
+  if (i == length(gammas)){
+    print(paste0("Best gamma is ", gammas[i]))
+  }
+}
 
-classifier <- svm(y ~ ., data = mydata)
-prediction <- predict(classifier, newdata = test)
-#folders[as.integer(prediction)]
+# accuracy of validation set
 
-# newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
-# 
-# #newimg <- load.image("C:/Users/jans7/OneDrive - Marquette University/Fall 2022/MSSC 5931 - Topics in Math or Stats/Project/NewFace_20/Laura_Bush/Laura_Bush_0034.jpg")
-# newimg <- resize(grayscale(newimg), n, n)
-# newimgv <- as.data.frame(newimg)[3]
-# newimgv <- as.matrix(newimgv)
-# 
-# # multiply your image by the rotation matrix to put it in correct form
-# 
-# newdat2 <- t(newimgv)%*%faces_pca$rotation[,1:r]
-# 
-# prediction <- predict(classifier, newdat2)
-# folders[as.integer(prediction)]
+classifier <- svm(y ~ ., data = train, gamma = 0.000001, kernel = "radial")
+prediction <- predict(classifier, newdata = val)
+sum(prediction == val$y)/length(prediction)
 
+# accuracy of test set
 
-# check if in data frame --------------------------------------------------
+prediction2 <- predict(classifier, newdata = test)
+sum(prediction2 == test$y)/length(prediction2)
 
-#plot(as.cimg(matrix(newimgv, ncol = n)))
+# putting y and the predictors together and making y a factor for SVM
+# with PCA
 
-# for (i in 1:ncol(X)) {
-#   if(mean(as.data.frame(newimgv) == X[,i]) == 1){
-#     print(paste("There was a match at column", i))
-#     break
-#   }
-#   if(i == ncol(X)){
-#     print("The picture was not in the dataset")
-#   }
-# }
+mydata <- as.data.frame(cbind(y, faces_pca$x[,1:r]))
+mydata$y <- as.factor(mydata$y)
 
-var <- table(as.numeric(prediction), as.matrix(test[,1])) 
-
-for (i in 1:length(var)[1,]) {
-  print(var[i,i])
-  
+train <- c()
+val <- c()
+test <- c()
+for (i in 1:length(mydata[,1])) {
+  if (i%%60 <= 48 & i%%60 != 0) {
+    train <- rbind(train, mydata[i,])
+  }
+  else
+  {
+    if (i%%60 <= 54 & i%%60 != 0) {
+      val <- rbind(val,mydata[i,])
+    }
+    else
+    {
+      if (i%%60 <= 60 || i%%60 == 0) {
+        test <- rbind(test, mydata[i,])
+      }
+    }
+  }
   
 }
 
-#plot(as.cimg(matrix(ourpred, ncol = n)))
-#title(title(name_associated_w_pic_num(reduced_dir, place)))
+# choosing the best kernel parameter for our final model
+
+accuracy <- c()
+max <- 0
+gammas <- c(0.1,0.01,0.001,0.0001,0.00001,0.000001)
+
+for (i in 1:length(gammas)) {
+  classifier <- svm(y ~ ., data = train, gamma = gammas[i], kernel = "radial")
+  prediction <- predict(classifier, newdata = val)
+  m <- sum(prediction == val$y)/length(prediction)
+  accuracy <- c(accuracy, m)
+  if (m == max(accuracy)){
+    max <- m
+  }
+  if (i == length(gammas)){
+    print(paste0("Best gamma is ", gammas[i]))
+  }
+}
+
+# accuracy of validation set
+
+classifier <- svm(y ~ ., data = train, gamma = 0.000001, kernel = "radial")
+prediction <- predict(classifier, newdata = val)
+sum(prediction == val$y)/length(prediction)
+
+# accuracy of test set
+
+prediction2 <- predict(classifier, newdata = test)
+sum(prediction2 == test$y)/length(prediction2)
+
+(var <- table(as.numeric(prediction), as.matrix(test[,1])))
+
+for (i in 1:length(var[1,])) {
+  print(var[i,i]/sum(var[,i]))
+}
