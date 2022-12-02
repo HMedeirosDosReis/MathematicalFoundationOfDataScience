@@ -54,14 +54,114 @@ main <- function()
     ggtitle("Scree Plot") +
     ylim(0, 1)
   
-  response_var <- create_matrix(folders,nphotos=20,n=100, predictor=FALSE)
   
-  mydata <- as.data.frame(cbind(response_var, faces_pca$x[,1:imp_val]))
+  # prepare to do SVM
+  response_var <- c()
+  for (i in 1:length(folders)) 
+  {
+    setwd(paste0(reduced_dir, "/",folders[i]))
+    photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
+                  pattern = NULL, all.files = FALSE,
+                  full.names = FALSE, recursive = FALSE,
+                  ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+    response_var <- c(y, rep(i, each=60))
+  }
+  
+  # no PCA
+  
+  mydata <- as.data.frame(cbind(response_var, faces_pca$x))
   mydata$response_var <- as.factor(mydata$response_var)
   
-  classifier <- svm(response_var ~ ., data = mydata)
-  prediction <- predict(classifier, newdata = faces_pca$x[,1:imp_val])
-  folders[as.integer(prediction)]
   
+  # split data
   
+  tic("index PCA splitting")
+  data_vec <- 1:length(mydata[,1])
+  train_vec <- data_vec[data_vec%%60 <= 48 & data_vec%%60 != 0]
+  val_vec <- data_vec[data_vec%%60 <= 54 & data_vec%%60 > 48]
+  test_vec <- data_vec[data_vec%%60 <= 60 & data_vec%%60 > 54 | data_vec%%60 == 0]
+  
+  train <- mydata[train_vec,]
+  val <- mydata[val_vec,]
+  test <- mydata[test_vec,]
+  toc()
+  
+  # choosing the best kernel parameter for our final model
+  
+  accuracy <- c()
+  max <- 0
+  b_gamma <- 0
+  gammas <- c(0.1,0.01,0.001,0.0001,0.00001,0.000001)
+  
+  for (i in 1:length(gammas)) 
+  {
+    classifier <- svm(y ~ ., data = train, gamma = gammas[i], kernel = "radial")
+    prediction <- predict(classifier, newdata = val)
+    m <- sum(prediction == val$y)/length(prediction)
+    accuracy <- c(accuracy, m)
+    if (m == max(accuracy))
+    {
+      max <- m
+    }
+    if (i == length(gammas))
+    {
+      print(paste0("Best gamma is ", gammas[i]))
+      b_gamma <- gammas[i]
+    }
+  }
+  
+  # accuracy of validation set
+  
+  classifier <- svm(y ~ ., data = train, gamma = b_gamma, kernel = "radial")
+  prediction <- predict(classifier, newdata = val)
+  sum(prediction == val$y)/length(prediction)
+  
+  # accuracy of test set
+  
+  prediction2 <- predict(classifier, newdata = test)
+  sum(prediction2 == test$y)/length(prediction2)
+  
+  # with pca
+  # index splitting ~0.01 s
+  
+  tic("index PCA splitting")
+  data_vec <- 1:length(mydata[,1])
+  train_vec <- data_vec[data_vec%%60 <= 48 & data_vec%%60 != 0]
+  val_vec <- data_vec[data_vec%%60 <= 54 & data_vec%%60 > 48]
+  test_vec <- data_vec[data_vec%%60 <= 60 & data_vec%%60 > 54 | data_vec%%60 == 0]
+  
+  train <- mydata[train_vec,]
+  val <- mydata[val_vec,]
+  test <- mydata[test_vec,]
+  toc()
+  
+  # choosing the best kernel parameter for our final model
+  
+  accuracy <- c()
+  max <- 0
+  gammas <- c(0.1,0.01,0.001,0.0001,0.00001,0.000001)
+  
+  for (i in 1:length(gammas)) {
+    classifier <- svm(y ~ ., data = train, gamma = gammas[i], kernel = "radial")
+    prediction <- predict(classifier, newdata = val)
+    m <- sum(prediction == val$y)/length(prediction)
+    accuracy <- c(accuracy, m)
+    if (m == max(accuracy)){
+      max <- m
+    }
+    if (i == length(gammas)){
+      print(paste0("Best gamma is ", gammas[i]))
+    }
+  }
+  
+  # accuracy of validation set
+  
+  classifier <- svm(y ~ ., data = train, gamma = 0.000001, kernel = "radial")
+  prediction <- predict(classifier, newdata = val)
+  sum(prediction == val$y)/length(prediction)
+  
+  # accuracy of test set
+  
+  prediction2 <- predict(classifier, newdata = test)
+  sum(prediction2 == test$y)/length(prediction2)
 }
