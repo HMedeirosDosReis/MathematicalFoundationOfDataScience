@@ -199,18 +199,29 @@ mydata <- as.data.frame(cbind(y, faces_pca$x[,1:r]))
 mydata$y <- as.factor(mydata$y)
 
 #HERE IS WHERE YOU DO TEST AND TRAIN
-mydata<- matrix(rnorm(100),nrow=10)
-train <- mydata[1:round(length(mydata[1,])*0.8),]
-test <- mydata[(round(length(mydata[1,])*0.8)+1):length(mydata[1,]),]
-#train <- mydata[1:0.8*length(mydata[1,]),1:0.8*length(mydata[,1])]
-#test <- mydata[0.8*length(mydata[1,]):,0.8*length(mydata[,1]):]
+
+train <- mydata[1,]
+test <- mydata[1,]
+#i%%20 < 16 ||
+for (i in 1:length(mydata[,1])) {
+  if ( i%%20 != 0) {
+    train <- rbind(train, mydata[i,])
+  }
+  else
+  {
+    test <- rbind(test,mydata[i,])
+  }
+  
+}
+train <- train[-1,]
+test <- test[-1,]
 
 
 
 
 classifier <- svm(y ~ ., data = mydata)
-prediction <- predict(classifier, newdata = faces_pca$x[,1:r])
-folders[as.integer(prediction)]
+prediction <- predict(classifier, newdata = test)
+#folders[as.integer(prediction)]
 
 # newdat <- t(X[,439])%*%faces_pca$rotation[,1:r]
 # 
@@ -241,9 +252,13 @@ folders[as.integer(prediction)]
 #   }
 # }
 
-var <- table(as.numeric(prediction), as.matrix(y)) 
+var <- table(as.numeric(prediction), as.matrix(test[,1])) 
 
-
+for (i in 1:length(var)[1,]) {
+  print(var[i,i])
+  
+  
+}
 
 #plot(as.cimg(matrix(ourpred, ncol = n)))
 #title(title(name_associated_w_pic_num(reduced_dir, place)))
