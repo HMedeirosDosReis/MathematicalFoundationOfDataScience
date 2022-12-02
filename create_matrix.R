@@ -1,45 +1,24 @@
 # CREATING MATRIX OF IMAGES (nxn)
 
-create_matrix <- function(folders,nphotos=20,n=100, predictor=TRUE)
+create_matrix <- function(folders,nphotos=60,n=100)
 {
-  if(predictor)
-  {
-    X <- c()
-    
-    tic("runtime")
-    for (i in 1:length(folders)) 
+
+  X <- c()
+    for (i in 1:length(folders))
     {
-      name <- folders[i]
-      setwd(paste0(reduced_dir, "/",name))
-      photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
-                    pattern = NULL, all.files = FALSE,
-                    full.names = FALSE, recursive = FALSE,
-                    ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-      for (j in 1:nphotos*0.8) 
-      {
-        pic <- grayscale(load.image(photos[j]))
-        pic <- resize(pic, n, n)
-        vector <- as.data.frame(pic)[,3]
-        X <- cbind(X, vector)
-      }
-    }
-    toc()
-    return(X)
-  }
-  else
-  {
-    y<-c()
-    
-    for (i in length(folders)*0.8:20) 
-    {
-      
       setwd(paste0(reduced_dir, "/",folders[i]))
       photos <- dir(path = paste0(reduced_dir, "/",folders[i]), 
                     pattern = NULL, all.files = FALSE,
                     full.names = FALSE, recursive = FALSE,
                     ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
-      y <- c(y, rep(i, each=20))
+      for (j in 1:nphotos) 
+      {
+        pic <- grayscale(load.image(photos[j]))
+        pic <- resize(pic, n, n)
+        pic <- matrix(pic,nrow=n)[-c(c(1:floor(0.25*n)),c(floor(0.75*n+1):n)),-c(c(1:floor(0.25*n)),c(floor(0.75*n+1):n))]
+        vector <- matrix(pic, ncol=1)[,1]
+        X <- cbind(X, vector)
+      }
     }
-    return(y)
-  }
+  return(X)
 }
