@@ -103,7 +103,8 @@ qplot(c(1:10), var_explained[1:10]) +
   ylab("Variance Explained") +
   ggtitle("Scree Plot") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  ylim(0, 1)
+  scale_x_continuous(breaks=seq(0,10,1)) +
+  ylim(0,1)
 
 # plotting Eigenfaces and reconstructing images ---------------------------
 
@@ -145,6 +146,9 @@ for (i in 1:length(folders)) {
 mydata <- as.data.frame(cbind(y, faces_pca$x))
 mydata$y <- as.factor(mydata$y)
 
+#for loop splitting ~3.61 s
+
+tic("for loop PCA splitting")
 train <- c()
 val <- c()
 test <- c()
@@ -164,8 +168,21 @@ for (i in 1:length(mydata[,1])) {
       }
     }
   }
-  
 }
+toc()
+
+# index splitting~0.02 s
+
+tic("index PCA splitting")
+data_vec <- 1:length(mydata[,1])
+train_vec <- data_vec[data_vec%%60 <= 48 & data_vec%%60 != 0]
+val_vec <- data_vec[data_vec%%60 <= 54 & data_vec%%60 > 48]
+test_vec <- data_vec[data_vec%%60 <= 60 & data_vec%%60 > 54 | data_vec%%60 == 0]
+
+train <- mydata[train_vec,]
+val <- mydata[val_vec,]
+test <- mydata[test_vec,]
+toc()
 
 # choosing the best kernel parameter for our final model
 
@@ -203,6 +220,9 @@ sum(prediction2 == test$y)/length(prediction2)
 mydata <- as.data.frame(cbind(y, faces_pca$x[,1:r]))
 mydata$y <- as.factor(mydata$y)
 
+# for loop splitting ~0.93 s
+
+tic("for loop PCA splitting")
 train <- c()
 val <- c()
 test <- c()
@@ -224,6 +244,20 @@ for (i in 1:length(mydata[,1])) {
   }
   
 }
+toc()
+
+# index splitting ~0.01 s
+
+tic("index PCA splitting")
+data_vec <- 1:length(mydata[,1])
+train_vec <- data_vec[data_vec%%60 <= 48 & data_vec%%60 != 0]
+val_vec <- data_vec[data_vec%%60 <= 54 & data_vec%%60 > 48]
+test_vec <- data_vec[data_vec%%60 <= 60 & data_vec%%60 > 54 | data_vec%%60 == 0]
+
+train <- mydata[train_vec,]
+val <- mydata[val_vec,]
+test <- mydata[test_vec,]
+toc()
 
 # choosing the best kernel parameter for our final model
 
@@ -260,3 +294,19 @@ sum(prediction2 == test$y)/length(prediction2)
 for (i in 1:length(var[1,])) {
   print(var[i,i]/sum(var[,i]))
 }
+
+# pictures of our people --------------------------------------------------
+
+pplot <- function(i){
+  matrix <- matrix(X[,60*(i-1)+1], nrow = n/2)
+  plot(as.cimg(matrix), axes = F)
+}
+
+setwd("C:/Users/jdseidma/Desktop/Projects/Topics/MathematicalFoundationOfDataScience")
+
+for (i in 1:8) {
+  jpeg(paste0(folders[i],"ppt",".jpeg"), quality = 100)
+  pplot(i)
+  dev.off()
+}
+
