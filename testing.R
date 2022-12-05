@@ -310,3 +310,14 @@ for (i in 1:8) {
   dev.off()
 }
 
+# prediction picture with correct classification and model classification
+
+prediction_plot <- function(k){
+  prediction <- predict(classifier, newdata = test[k,])
+  k2 <- 60*(if(k%%6 == 0){k%/%6-1} else{k%/%6}) + 54 + if(k%%6 == 0){6} else{k%%6}
+  x <- as.matrix(faces_pca$x)[k2,]%*%t(faces_pca$rotation)
+  plot(as.cimg(matrix(x, nrow = n/2)), axes = F,xlim = c(0,325))
+  text(145,50, labels = as.character(paste("Correct:",folders[test[k,1]])), adj = 0, col = 'red')
+  text(145,70, labels = as.character(paste("Prediction:", folders[prediction])), adj = 0, col = 'blue')
+}
+
